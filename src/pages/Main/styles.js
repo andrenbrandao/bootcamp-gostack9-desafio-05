@@ -73,3 +73,9 @@ export const List = styled.ul`
     }
   }
 `;
+
+export const Input = styled.input`
+  &.is-invalid {
+    border: 1px solid #dc3545;
+  }
+`;
