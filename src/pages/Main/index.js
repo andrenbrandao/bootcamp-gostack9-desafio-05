@@ -43,6 +43,14 @@ export default class Main extends Component {
     const { newRepo, repositories } = this.state;
 
     try {
+      if (
+        repositories.find(
+          repo => repo.name.toLocaleUpperCase() === newRepo.toLocaleUpperCase()
+        )
+      ) {
+        throw new Error('Duplicated repository');
+      }
+
       const response = await api.get(`/repos/${newRepo}`);
 
       const data = {
@@ -56,6 +64,7 @@ export default class Main extends Component {
         error: false,
       });
     } catch (err) {
+      console.error(err);
       this.setState({
         loading: false,
         error: true,
