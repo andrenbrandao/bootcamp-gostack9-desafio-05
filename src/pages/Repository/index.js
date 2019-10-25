@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import api from '../../services/api';
 
-import { Loading, Owner, IssueList } from './styles';
+import { Loading, Owner, IssueList, FilterList } from './styles';
 import Container from '../../components/Container';
 
 export default class Repository extends Component {
@@ -19,6 +19,7 @@ export default class Repository extends Component {
     repository: {},
     issues: [],
     loading: true,
+    filter: 'open',
   };
 
   async componentDidMount() {
@@ -43,8 +44,25 @@ export default class Repository extends Component {
     });
   }
 
+  async handleFilter(filter) {
+    const { repository } = this.state;
+    const repoName = repository.full_name;
+
+    const issues = await api.get(`/repos/${repoName}/issues`, {
+      params: {
+        state: filter,
+        per_page: 5,
+      },
+    });
+
+    this.setState({
+      issues: issues.data,
+      filter,
+    });
+  }
+
   render() {
-    const { repository, issues, loading } = this.state;
+    const { repository, issues, loading, filter } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -60,6 +78,30 @@ export default class Repository extends Component {
         </Owner>
 
         <IssueList>
+          <FilterList>
+            <button
+              type="button"
+              className={filter === 'open' ? 'active' : undefined}
+              onClick={() => this.handleFilter('open')}
+            >
+              Abertas
+            </button>
+            <button
+              type="button"
+              className={filter === 'closed' ? 'active' : undefined}
+              onClick={() => this.handleFilter('closed')}
+            >
+              Fechadas
+            </button>
+            <button
+              type="button"
+              className={filter === 'all' ? 'active' : undefined}
+              onClick={() => this.handleFilter('all')}
+            >
+              Todas
+            </button>
+          </FilterList>
+
           {issues.map(issue => (
             <li key={String(issue.id)}>
               <img src={issue.user.avatar_url} alt={issue.user.login} />
