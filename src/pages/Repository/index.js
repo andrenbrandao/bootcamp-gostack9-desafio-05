@@ -21,6 +21,7 @@ export default class Repository extends Component {
     loading: true,
     filter: 'open',
     page: 1,
+    lastPage: 1,
   };
 
   async componentDidMount() {
@@ -38,10 +39,21 @@ export default class Repository extends Component {
       }),
     ]);
 
+    let lastPage = 1;
+    const issueLinks = issues.headers.link;
+
+    if (issueLinks) {
+      const pageLinks = issues.headers.link.split(',');
+      [, lastPage] = pageLinks
+        .find(link => link.match(/rel="last"$/i))
+        .match(/page=(\d+)>/);
+    }
+
     this.setState({
       repository: repository.data,
       issues: issues.data,
       loading: false,
+      lastPage,
     });
   }
 
@@ -56,9 +68,20 @@ export default class Repository extends Component {
       },
     });
 
+    let lastPage = 1;
+    const issueLinks = issues.headers.link;
+
+    if (issueLinks) {
+      const pageLinks = issues.headers.link.split(',');
+      [, lastPage] = pageLinks
+        .find(link => link.match(/rel="last"$/i))
+        .match(/page=(\d+)>/);
+    }
+
     this.setState({
       issues: issues.data,
       page: 1,
+      lastPage,
       filter,
     });
   }
@@ -82,7 +105,7 @@ export default class Repository extends Component {
   }
 
   render() {
-    const { repository, issues, loading, filter, page } = this.state;
+    const { repository, issues, loading, filter, page, lastPage } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -146,7 +169,11 @@ export default class Repository extends Component {
           >
             Anterior
           </button>
-          <button type="button" onClick={() => this.handlePaginate(page + 1)}>
+          <button
+            type="button"
+            disabled={page === parseInt(lastPage, 10)}
+            onClick={() => this.handlePaginate(page + 1)}
+          >
             Próxima
           </button>
         </Pagination>
