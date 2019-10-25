@@ -159,24 +159,26 @@ export default class Repository extends Component {
               </div>
             </li>
           ))}
-        </IssueList>
 
-        <Pagination>
-          <button
-            type="button"
-            disabled={page === 1}
-            onClick={() => this.handlePaginate(page - 1)}
-          >
-            Anterior
-          </button>
-          <button
-            type="button"
-            disabled={page === parseInt(lastPage, 10)}
-            onClick={() => this.handlePaginate(page + 1)}
-          >
-            Próxima
-          </button>
-        </Pagination>
+          {issues.length === 0 ? <p>Nenhuma issue encontrada</p> : undefined}
+
+          <Pagination>
+            <button
+              type="button"
+              disabled={page === 1}
+              onClick={() => this.handlePaginate(page - 1)}
+            >
+              Anterior
+            </button>
+            <button
+              type="button"
+              disabled={page === parseInt(lastPage, 10)}
+              onClick={() => this.handlePaginate(page + 1)}
+            >
+              Próxima
+            </button>
+          </Pagination>
+        </IssueList>
       </Container>
     );
   }

@@ -100,6 +100,13 @@ export const IssueList = styled.ul`
       }
     }
   }
+
+  & > p {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+    text-align: center;
+  }
 `;
 
 export const FilterList = styled.div`
