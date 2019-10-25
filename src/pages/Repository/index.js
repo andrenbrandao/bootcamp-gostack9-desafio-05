@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import api from '../../services/api';
 
-import { Loading, Owner, IssueList, FilterList } from './styles';
+import { Loading, Owner, IssueList, FilterList, Pagination } from './styles';
 import Container from '../../components/Container';
 
 export default class Repository extends Component {
@@ -20,6 +20,7 @@ export default class Repository extends Component {
     issues: [],
     loading: true,
     filter: 'open',
+    page: 1,
   };
 
   async componentDidMount() {
@@ -57,12 +58,31 @@ export default class Repository extends Component {
 
     this.setState({
       issues: issues.data,
+      page: 1,
       filter,
     });
   }
 
+  async handlePaginate(page) {
+    const { repository, filter } = this.state;
+    const repoName = repository.full_name;
+
+    const issues = await api.get(`/repos/${repoName}/issues`, {
+      params: {
+        state: filter,
+        per_page: 5,
+        page,
+      },
+    });
+
+    this.setState({
+      issues: issues.data,
+      page,
+    });
+  }
+
   render() {
-    const { repository, issues, loading, filter } = this.state;
+    const { repository, issues, loading, filter, page } = this.state;
 
     if (loading) {
       return <Loading>Carregando</Loading>;
@@ -117,6 +137,19 @@ export default class Repository extends Component {
             </li>
           ))}
         </IssueList>
+
+        <Pagination>
+          <button
+            type="button"
+            disabled={page === 1}
+            onClick={() => this.handlePaginate(page - 1)}
+          >
+            Anterior
+          </button>
+          <button type="button" onClick={() => this.handlePaginate(page + 1)}>
+            Próxima
+          </button>
+        </Pagination>
       </Container>
     );
   }
