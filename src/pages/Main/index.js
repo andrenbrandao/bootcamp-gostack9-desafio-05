@@ -32,7 +32,7 @@ export default class Main extends Component {
   }
 
   handleInputChange = e => {
-    this.setState({ newRepo: e.target.value });
+    this.setState({ newRepo: e.target.value, error: false });
   };
 
   handleSubmit = async e => {
@@ -64,7 +64,6 @@ export default class Main extends Component {
         error: false,
       });
     } catch (err) {
-      console.error(err);
       this.setState({
         loading: false,
         error: true,

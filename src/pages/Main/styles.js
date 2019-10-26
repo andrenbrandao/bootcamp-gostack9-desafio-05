@@ -77,5 +77,6 @@ export const List = styled.ul`
 export const Input = styled.input`
   &.is-invalid {
     border: 1px solid #dc3545;
+    transition: border 0.25s ease-out;
   }
 `;
